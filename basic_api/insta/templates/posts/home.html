@@ -1,0 +1,173 @@
+	{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Jekyll v3.8.6">
+    <title>Instagram</title>
+
+    <style>
+.dropbtn {
+  color: black;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  height: 10px;
+  padding-top: 0px;
+}
+
+.cdropbtn {
+  color: red;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  height: 10px;
+  padding-top: 0px;
+
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  margin-left: 450px;
+  margin-bottom: 15px;
+
+}
+
+.cdropdown {
+  position: relative;
+  width: 200px;
+  display: inline-block;
+  float: right;
+  /*margin-right: 650px;*/
+ }
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 80px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.cdropdown:hover .dropdown-content {display: block;}
+
+
+/*.dropdown:hover .dropbtn {background-color: #3e8e41;}*/
+</style>
+    <!-- Bootstrap core CSS -->
+    
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+  
+  </head>
+  <body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+	  <a class="navbar-brand" href="{% url 'home' %}">Instagram</a>
+	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+	    <span class="navbar-toggler-icon"></span>
+	  </button>
+
+	  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+	    <ul class="navbar-nav mr-auto">
+	      <li class="nav-item active">
+	        <a class="nav-link" href="{% url 'home' %}">Home <span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+	      </li>
+	    </ul>
+	    <form class="form-inline" style="margin-left:10%; ">
+	      <input class="form-control mr-sm-2" type="search" placeholder="Search by username" aria-label="Search">
+	      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	    </form>
+	    
+		    <ul class="nav navbar-nav navbar-right">
+		      <li><span class="glyphicon glyphicon-user" style="margin-right: 370px;"></span> Welcome {{ request.user }}</li>
+		      <li><a href="{% url 'logoutUser' %}"><span class="glyphicon glyphicon-log-out" style="margin-right: 15px;"></span>Logout</a></li>
+		    </ul>
+	  </div>
+	</nav>
+
+<br>
+
+{% for post in user_posts %}
+		<div style="width:600px; margin:0 auto;">
+		        <div class="card mb-4 shadow-sm">
+		        		<div class="row">
+			        		<p style="margin-left: 20px;">User  <a href="{% url 'userprofile_view' post.user.id %}"><strong>@{{ post.user.username }}</strong></a></p>
+			        		<div class = "dropdown">
+			        			<p class="dropbtn"><strong style="margin-bottom: 40px;">...</strong></p>
+			        			<div class="dropdown-content">
+			        				<a href="{% url 'delete_post' post.id %}">Delete</a>
+								    <a href="#">Unfollow</a>
+			        			</div>
+			        		</div>
+
+						</div>
+			        	<!-- <hr> -->
+		    			<div style="width:600px;
+					              height:500px;
+					              background-image:url('{{ post.image.url }}');
+					              background-repeat: no-repeat;
+					              background-size:cover;
+					              background-position:center;
+					              margin: 0 auto;">
+	            		</div>
+	            		<div>
+	            			<p>Caption:: <strong>{{ post.caption }}</strong></p>
+	            		</div>
+	            		<br>
+	            		
+	            		<hr>
+	            		<div class="allcomment" style="width: 600px;">
+	            			{% for comment in post.comments.all %}
+	            				<div class="comment" style="width: 600px; height: 50px; ">
+	            					<div class="usercomment" style="width: 300px;">
+	            						<p style="padding-left: 5px;"><a href="{% url 'userprofile_view' post.user.id %}" style="padding-left: 5px;">@{{ comment.author }}</a>  {{ comment.text }}</p>
+	            					</div>
+	            					
+
+	            					<div class = "cdropdown">
+					        			<p class="cdropbtn"><strong>...</strong></p>
+					        			<div class="dropdown-content">
+					        				<a href="{% url 'edit_comment' comment.id %}">Edit</a>
+					        				<a href="{% url 'delete_comment' comment.id %}">Delete</a>
+					        			</div>
+			        				</div>
+			        				
+	            				</div>
+	            				<hr>
+	            			{% endfor %}
+	            			
+	            			<form method="POST" action="{% url 'add_comment' post.id %}" class="form-inline">
+	            				{% csrf_token %}
+	            				{{ comment_form }}
+	            				<input type="submit" value="Add" class="btn btn-primary">
+	            			</form>
+	            			<br>
+	            		</div>
+	            </div>		
+		</div>
+		<br>
+		<br>
+	{% endfor %}
+	
+</body>
+</html>
+
